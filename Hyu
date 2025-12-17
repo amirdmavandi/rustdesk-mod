@@ -187,7 +187,7 @@ public UserDto Register([FromBody] NewLocalUserDto dto)
                         PreferredLanguage = "en",
                         Gold = 200,
                         LastFreeGold = DateTime.Now,
-                        PassHash = dto.passHash,
+                        PassHash = userDto.passHash,
                         LocalLogin = userDto.localLoginName
                     };
                     db.Users.Add(dbUser);

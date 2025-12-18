@@ -1,3 +1,4 @@
+
 ۸﻿using Backend.Db;
 using Backend.Dto;
 using Backend.Dto.account;
@@ -189,6 +190,9 @@ namespace Backend.Controllers
 
 if (admin != null)
 {
+    if (dbUser.ReceivedMessages == null)
+        dbUser.ReceivedMessages = new List<Message>();
+
     dbUser.ReceivedMessages.Add(new Message
     {
         Text = "",

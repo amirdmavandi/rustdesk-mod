@@ -185,14 +185,10 @@ namespace Backend.Controllers
                     db.Users.Add(dbUser);
 
                     // Give new users a prompt message to share the site.
-                    var admin = db.Users.FirstOrDefault(u => u.Admin);
-
-if (admin != null)
-{
-    if (dbUser.ReceivedMessages == null)
-        dbUser.ReceivedMessages = new List<Message>();
-
-    dbUser.ReceivedMessages.Add(new Message
+                    var existing = db.Users.FirstOrDefault(u =>
+    u.LocalLogin != null &&
+    u.LocalLogin == dto.name.ToLower()
+);
     {
         Text = "",
         Type = MessageType.SharePrompt,

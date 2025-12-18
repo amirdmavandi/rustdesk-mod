@@ -1,4 +1,4 @@
-﻿using Backend.Db;
+       ﻿using Backend.Db;
 using Backend.Dto;
 using Backend.Dto.account;
 using Backend.Dto.message;
@@ -35,14 +35,6 @@ namespace Backend.Controllers
             this.logger = logger;
             this.configuration = configuration;
         }
-
-[HttpPost]
-[Route("/api/account/register")]
-public UserDto Register([FromBody] NewLocalUserDto dto)
-{
-    return NewLocal(dto);
-}
-
 
         [HttpPost]
         [Route("/api/account/signin")]
@@ -187,7 +179,7 @@ public UserDto Register([FromBody] NewLocalUserDto dto)
                         PreferredLanguage = "en",
                         Gold = 200,
                         LastFreeGold = DateTime.Now,
-                        u.PassHash == userDto.passHash.GetHashCode()
+                        PassHash = userDto.passHash,
                         LocalLogin = userDto.localLoginName
                     };
                     db.Users.Add(dbUser);
@@ -214,21 +206,25 @@ public UserDto Register([FromBody] NewLocalUserDto dto)
         }
 
         [HttpPost]
-        [Route("/api/account/saveuser")]
-        public void SaveUser(UserDto userDto)
-        {
-            var usId = GetUserId();
-            using (var db = new Db.BgDbContext())
-            {
-                var dbUser = db.Users.Single(u => u.Id.ToString() == usId);
-                dbUser.Name = userDto.name;
-                dbUser.PreferredLanguage = userDto.preferredLanguage;
-                dbUser.Theme = userDto.theme;
-                dbUser.EmailNotifications = userDto.emailNotification;
-                dbUser.ShowPhoto = userDto.showPhoto;
-                db.SaveChanges();
-            }
-        }
+[Route("/api/account/saveuser")]
+public void SaveUser(UserDto userDto)
+{
+    var usId = GetUserId();
+    var userGuid = Guid.Parse(usId);
+
+    using (var db = new Db.BgDbContext())
+    {
+        var dbUser = db.Users.Single(u => u.Id == userGuid);
+
+        dbUser.Name = userDto.name;
+        dbUser.PreferredLanguage = userDto.preferredLanguage;
+        dbUser.Theme = userDto.theme;
+        dbUser.EmailNotifications = userDto.emailNotification;
+        dbUser.ShowPhoto = userDto.showPhoto;
+
+        db.SaveChanges();
+    }
+}
 
         [HttpPost]
         [Route("/api/account/delete")]
@@ -236,8 +232,8 @@ public UserDto Register([FromBody] NewLocalUserDto dto)
         {
             var usId = GetUserId();
             // some kind of safety check.
-            if (userDto.id != usId)
-                throw new ApplicationException("User id missmatch"); // The id in the request header should always be the same as sent by client.
+            if (Guid.Parse(userDto.id) != Guid.Parse(usId))
+    throw new ApplicationException("User id missmatch"); // The id in the request header should always be the same as sent by client.
 
             using (var db = new Db.BgDbContext())
             {
@@ -258,28 +254,34 @@ public UserDto Register([FromBody] NewLocalUserDto dto)
         }
 
         [HttpGet]
-        [Route("/api/account/requestgold")]
-        public GoldGiftDto RequestGold()
-        {
-            var usId = GetUserId();
-            using (var db = new Db.BgDbContext())
-            {
-                var dbUser = db.Users.Single(u => u.Id.ToString() == usId);
-                if (dbUser.Gold < GoldGiftDto.Gift && DateTime.UtcNow > dbUser.LastFreeGold.AddDays(1))
-                {
-                    dbUser.Gold += GoldGiftDto.Gift;
-                    dbUser.LastFreeGold = DateTime.UtcNow;
-                    db.SaveChanges();
-                }
+[Route("/api/account/requestgold")]
+public GoldGiftDto RequestGold()
+{
+    var usId = GetUserId();
+    var userGuid = Guid.Parse(usId);
 
-                int unixTimestamp = (int)dbUser.LastFreeGold.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
-                return new GoldGiftDto
-                {
-                    gold = dbUser.Gold,
-                    lastFreeGold = unixTimestamp
-                };
-            }
+    using (var db = new Db.BgDbContext())
+    {
+        var dbUser = db.Users.Single(u => u.Id == userGuid);
+
+        if (dbUser.Gold < GoldGiftDto.Gift &&
+            DateTime.UtcNow > dbUser.LastFreeGold.AddDays(1))
+        {
+            dbUser.Gold += GoldGiftDto.Gift;
+            dbUser.LastFreeGold = DateTime.UtcNow;
+            db.SaveChanges();
         }
+
+        int unixTimestamp =
+            (int)dbUser.LastFreeGold.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+
+        return new GoldGiftDto
+        {
+            gold = dbUser.Gold,
+            lastFreeGold = unixTimestamp
+        };
+    }
+}
 
         [HttpGet]
         [Route("/api/account/toggleIntro")]
@@ -358,4 +360,4 @@ public UserDto Register([FromBody] NewLocalUserDto dto)
             return split.Select(l => l.Split("-")[0]).Distinct().ToArray();
         }
     }
-}
+}                     

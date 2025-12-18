@@ -196,6 +196,7 @@ if (admin != null)
         Sender = admin,
         Sent = DateTime.Now
     });
+}
 
 
                     db.SaveChanges();

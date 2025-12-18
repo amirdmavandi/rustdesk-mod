@@ -183,18 +183,17 @@ namespace Backend.Controllers
                         LocalLogin = userDto.localLoginName
                     };
                     db.Users.Add(dbUser);
-
-                    // Give new users a prompt message to share the site.
-                    var existing = db.Users.FirstOrDefault(u =>
+// Give new users a prompt message to share the site.
+var existing = db.Users.FirstOrDefault(u =>
     u.LocalLogin != null &&
     u.LocalLogin == dto.name.ToLower()
 );
-    {
-        Text = "",
-        Type = MessageType.SharePrompt,
-        Sender = admin,
-        Sent = DateTime.Now
-    });
+{
+    Text = "",
+    Type = MessageType.SharePrompt,
+    Sender = admin,
+    Sent = DateTime.Now
+});
 }
 
 

@@ -284,22 +284,23 @@ public GoldGiftDto RequestGold()
 }
 
         [HttpGet]
-        [Route("/api/account/toggleIntro")]
-        public bool ToggleIntro()
-        {
-            var mute = false;
-            var usId = GetUserId();
-            using (var db = new Db.BgDbContext())
-            {
-                var dbUser = db.Users.Single(u => u.Id.ToString() == usId);
-                mute = dbUser.MuteIntro;
+[Route("/api/account/toggleIntro")]
+public bool ToggleIntro()
+{
+    var usId = GetUserId();
+    var userGuid = Guid.Parse(usId);
 
-                dbUser.MuteIntro = !mute;
-                db.SaveChanges();
-            }
+    using (var db = new Db.BgDbContext())
+    {
+        var dbUser = db.Users.Single(u => u.Id == userGuid);
+        var mute = dbUser.MuteIntro;
 
-            return !mute;
-        }
+        dbUser.MuteIntro = !mute;
+        db.SaveChanges();
+
+        return !mute;
+    }
+}
 
 
         private async Task<bool> ValidateFacebookJwt(string token)

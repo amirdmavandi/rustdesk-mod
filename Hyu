@@ -227,31 +227,34 @@ public void SaveUser(UserDto userDto)
 }
 
         [HttpPost]
-        [Route("/api/account/delete")]
-        public void DeleteUserAccount(UserDto userDto)
-        {
-            var usId = GetUserId();
-            // some kind of safety check.
-            if (Guid.Parse(userDto.id) != Guid.Parse(usId))
-    throw new ApplicationException("User id missmatch"); // The id in the request header should always be the same as sent by client.
+[Route("/api/account/delete")]
+public void DeleteUserAccount(UserDto userDto)
+{
+    var usId = GetUserId();
+    var userGuid = Guid.Parse(usId);
 
-            using (var db = new Db.BgDbContext())
-            {
-                var dbUser = db.Users.Single(u => u.Id.ToString() == usId);
-                // maybe delete all records in player table, (has to be modeled out)                
-                dbUser.Name = "deleted";
-                dbUser.Elo = 0;
-                dbUser.SocialProvider = "";
-                dbUser.Email = "";
-                dbUser.GameCount = 0;
-                dbUser.PhotoUrl = "";
-                dbUser.ShowPhoto = false;
-                dbUser.ProviderId = "";
-                dbUser.PreferredLanguage = "";
-                dbUser.Admin = false;
-                db.SaveChanges();
-            }
-        }
+    // safety check
+    if (Guid.Parse(userDto.id) != userGuid)
+        throw new ApplicationException("User id missmatch");
+
+    using (var db = new Db.BgDbContext())
+    {
+        var dbUser = db.Users.Single(u => u.Id == userGuid);
+
+        dbUser.Name = "deleted";
+        dbUser.Elo = 0;
+        dbUser.SocialProvider = "";
+        dbUser.Email = "";
+        dbUser.GameCount = 0;
+        dbUser.PhotoUrl = "";
+        dbUser.ShowPhoto = false;
+        dbUser.ProviderId = "";
+        dbUser.PreferredLanguage = "";
+        dbUser.Admin = false;
+
+        db.SaveChanges();
+    }
+}
 
         [HttpGet]
 [Route("/api/account/requestgold")]

@@ -1,4 +1,4 @@
-﻿using Backend.Db;
+۸﻿using Backend.Db;
 using Backend.Dto;
 using Backend.Dto.account;
 using Backend.Dto.message;
@@ -187,13 +187,16 @@ namespace Backend.Controllers
                     // Give new users a prompt message to share the site.
                     var admin = db.Users.FirstOrDefault(u => u.Admin);
 
-                    dbUser.ReceivedMessages.Add(new Message
-                    {
-                        Text = "",
-                        Type = MessageType.SharePrompt,
-                        Sender = admin,
-                        Sent = DateTime.Now
-                    });
+if (admin != null)
+{
+    dbUser.ReceivedMessages.Add(new Message
+    {
+        Text = "",
+        Type = MessageType.SharePrompt,
+        Sender = admin,
+        Sent = DateTime.Now
+    });
+
 
                     db.SaveChanges();
                     // The id will not be set until the save is successfull.

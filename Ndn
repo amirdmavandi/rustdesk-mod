@@ -177,7 +177,7 @@ namespace Backend.Controllers
                         EmailUnsubscribeId = Guid.NewGuid(),
                         Theme = "dark",
                         PreferredLanguage = "en",
-                        Gold = 200,
+                        Gold = 20,
                         LastFreeGold = DateTime.Now,
                         PassHash = userDto.passHash,
                         LocalLogin = userDto.localLoginName

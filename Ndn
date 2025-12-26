@@ -47,7 +47,7 @@ namespace Backend.Controllers
                 logger.LogInformation("Signing in new user");
                 if (provider == "GOOGLE")
                 {
-                    var validPayload = await GoogleJsonWebSignature.ValidateAsync(userDto.socialProviderId, new GoogleJsonWebSignature.ValidationSettings { Audience = new[] { configuration["GoogleAuth:ClientId"] } });
+                    var validPayload = await GoogleJsonWebSignature.ValidateAsync(userDto.socialProviderId, new GoogleJsonWebSignature.ValidationSettings { Audience = new[] { configuration["Google:ClientId"] } });
                     // todo: more validation?
                     valid = validPayload != null;
                     if (valid)

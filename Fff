@@ -138,7 +138,7 @@ namespace Backend
                 if (Game.IsGoldGame && !playAi)
 {
     Game.BlackPlayer.Gold = dbUser != null ? dbUser.Gold - firstBet : 0;
-    Game.Stake = firstBet * 2;
+    Game.Stake = firstBet;
 }
 else if (playAi)
 {

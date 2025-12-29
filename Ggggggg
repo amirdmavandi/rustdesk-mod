@@ -135,12 +135,12 @@
     "youcangetmore": "You can get more gold every 24 hours.",
     "untilthen": "Until then you can always play practice games against the AI."
   },
-  "playaiquestion": {
-    "icantfind": "I can't find anyone else playing at the moment.",
-    "doyouwanttoplay": "Do you want to play against the AI?",
-    "playai": "Play AI",
-    "keepwaiting": "Keep waiting"
-  },
+"playaiquestion": {
+  "icantfind": "There are currently no available players.",
+  "doyouwanttoplay": "",
+  "playai": "",
+  "keepwaiting": "Continue waiting"
+}
   "password": {
     "name": "Name",
     "email": "E-mail",

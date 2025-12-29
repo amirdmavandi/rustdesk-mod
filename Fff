@@ -125,40 +125,77 @@ namespace Backend
         {
             return id.ToString().Equals(Player.AiUser, StringComparison.OrdinalIgnoreCase);
         }
+internal async Task ConnectAndListen(
+    WebSocket webSocket,
+    Player.Color color,
+    Db.User dbUser,
+    bool playAi
+)
+{
+    // 👇👇👇 این بخش جدید اضافه میشه (خیلی مهم)
+    // اگر بازی با AI بود، بازی سکه‌ای نباشه
+    if (playAi)
+    {
+        Game.IsGoldGame = false;
+        Game.Stake = 0;
+    }
+    // 👆👆👆 پایان بخش اضافه‌شده
 
-        internal async Task ConnectAndListen(WebSocket webSocket, Player.Color color, Db.User dbUser, bool playAi)
+    if (color == Player.Color.Black)
+    {
+        Client1 = webSocket;
+        Game.BlackPlayer.Id = dbUser != null ? dbUser.Id : Guid.Empty;
+        Game.BlackPlayer.Name = dbUser != null ? dbUser.Name : "Guest";
+        Game.BlackPlayer.Photo = dbUser != null && dbUser.ShowPhoto ? dbUser.PhotoUrl : "";
+        Game.BlackPlayer.Elo = dbUser != null ? dbUser.Elo : 0;
+
+        // ❌ چون playAi بالا Gold رو خاموش کرد، این بخش برای AI عملاً اجرا نمیشه
+        if (Game.IsGoldGame)
         {
-            if (color == Player.Color.Black)
-            {
-                Client1 = webSocket;
-                Game.BlackPlayer.Id = dbUser != null ? dbUser.Id : Guid.Empty;
-                Game.BlackPlayer.Name = dbUser != null ? dbUser.Name : "Guest";
-                Game.BlackPlayer.Photo = dbUser != null && dbUser.ShowPhoto ? dbUser.PhotoUrl : "";
-                Game.BlackPlayer.Elo = dbUser != null ? dbUser.Elo : 0;
-                if (Game.IsGoldGame)
-                {
-                    Game.BlackPlayer.Gold = dbUser != null ? dbUser.Gold - firstBet : 0;
-                    Game.Stake = firstBet * 2;
-                }
+            Game.BlackPlayer.Gold = dbUser != null ? dbUser.Gold - firstBet : 0;
+            Game.Stake = firstBet * 2;
+        }
 
-                if (playAi)
-                {
-                    var aiUser = Db.BgDbContext.GetDbUser(Player.AiUser);
-                    Game.WhitePlayer.Id = aiUser.Id;
-                    Game.WhitePlayer.Name = aiUser.Name;
-                    // TODO: AI image
-                    Game.WhitePlayer.Photo = aiUser.PhotoUrl;
-                    Game.WhitePlayer.Elo = aiUser.Elo;
-                    if (Game.IsGoldGame)
-                        Game.WhitePlayer.Gold = aiUser.Gold;
-                    Engine = new Ai.Engine(Game);
-                    CreateDbGame();
-                    StartGame();
-                    if (Game.CurrentPlayer == Player.Color.White)
-                        await EnginMoves(Client1);
-                }
-                await ListenOn(webSocket);
-            }
+        if (playAi)
+        {
+            var aiUser = Db.BgDbContext.GetDbUser(Player.AiUser);
+            Game.WhitePlayer.Id = aiUser.Id;
+            Game.WhitePlayer.Name = aiUser.Name;
+            Game.WhitePlayer.Photo = aiUser.PhotoUrl;
+            Game.WhitePlayer.Elo = aiUser.Elo;
+
+            // ⛔ AI هیچ سکه‌ای نمی‌گیره
+            Game.WhitePlayer.Gold = 0;
+
+            Engine = new Ai.Engine(Game);
+            CreateDbGame();
+            StartGame();
+
+            if (Game.CurrentPlayer == Player.Color.White)
+                await EnginMoves(Client1);
+        }
+
+        await ListenOn(webSocket);
+    }
+    else
+    {
+        if (playAi)
+            throw new ApplicationException("Ai always plays as white. This is not expected");
+
+        Client2 = webSocket;
+        Game.WhitePlayer.Id = dbUser != null ? dbUser.Id : Guid.Empty;
+        Game.WhitePlayer.Name = dbUser != null ? dbUser.Name : "Guest";
+        Game.WhitePlayer.Photo = dbUser != null && dbUser.ShowPhoto ? dbUser.PhotoUrl : "";
+        Game.WhitePlayer.Elo = dbUser != null ? dbUser.Elo : 0;
+
+        if (Game.IsGoldGame)
+            Game.WhitePlayer.Gold = dbUser != null ? dbUser.Gold - firstBet : 0;
+
+        CreateDbGame();
+        StartGame();
+        await ListenOn(webSocket);
+    }
+}
             else
             {
                 if (playAi)

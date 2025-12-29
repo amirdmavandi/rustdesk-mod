@@ -176,7 +176,7 @@ namespace Backend
             }
         }
 
-        const int firstBet = 10;
+        const int firstBet = 20;
 
         private void CreateDbGame()
         {

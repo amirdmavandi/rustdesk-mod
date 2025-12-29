@@ -136,10 +136,8 @@
     "untilthen": "Until then you can always play practice games against the AI."
   },
   "playaiquestion": {
-    "icantfind": "I can't find anyone else playing at the moment.",
-    "doyouwanttoplay": "Do you want to play against the AI?",
-    "playai": "Play AI",
-    "keepwaiting": "Keep waiting"
+  "icantfind": "I can't find anyone else playing at the moment.",
+  "keepwaiting": "Keep waiting","
   },
   "password": {
     "name": "Name",

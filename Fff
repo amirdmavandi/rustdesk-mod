@@ -135,15 +135,11 @@ namespace Backend
                 Game.BlackPlayer.Name = dbUser != null ? dbUser.Name : "Guest";
                 Game.BlackPlayer.Photo = dbUser != null && dbUser.ShowPhoto ? dbUser.PhotoUrl : "";
                 Game.BlackPlayer.Elo = dbUser != null ? dbUser.Elo : 0;
-                if (Game.IsGoldGame && !playAi)
-{
-    Game.BlackPlayer.Gold = dbUser != null ? dbUser.Gold - firstBet : 0;
-    Game.Stake = firstBet;
-}
-else if (playAi)
-{
-    Game.Stake = 0;
-}
+                if (Game.IsGoldGame)
+                {
+                    Game.BlackPlayer.Gold = dbUser != null ? dbUser.Gold - firstBet : 0;
+                    Game.Stake = firstBet * 2;
+                }
 
                 if (playAi)
                 {

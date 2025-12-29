@@ -127,12 +127,6 @@ namespace Backend
         }
 
         internal async Task ConnectAndListen(WebSocket webSocket, Player.Color color, Db.User dbUser, bool playAi)
-)
-{
-    // ❌ جلوگیری کامل از بازی با هوش مصنوعی
-    if (playAi)
-    {
-        throw new Exception("Playing against AI is disabled");
         {
             if (color == Player.Color.Black)
             {

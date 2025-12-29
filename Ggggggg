@@ -140,7 +140,8 @@
   "doyouwanttoplay": "",
   "playai": "",
   "keepwaiting": "Continue waiting"
-}
+},
+"password": {
   "password": {
     "name": "Name",
     "email": "E-mail",
